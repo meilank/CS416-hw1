@@ -86,12 +86,18 @@ trap(struct trapframe *tf)
               tf->trapno, cpu->id, tf->eip, rcr2());
       panic("trap");
     }
+    else if (tf->trapno == T_DIVIDE){
+      cprintf("divide by zero found, exiting program\n");
+      proc->killed = 1;
+    }
     // In user space, assume process misbehaved.
-    cprintf("pid %d %s: trap %d err %d on cpu %d "
-            "eip 0x%x addr 0x%x--kill proc\n",
-            proc->pid, proc->name, tf->trapno, tf->err, cpu->id, tf->eip, 
-            rcr2());
-    proc->killed = 1;
+    else {
+      cprintf("pid %d %s: trap %d err %d on cpu %d "
+              "eip 0x%x addr 0x%x--kill proc\n",
+              proc->pid, proc->name, tf->trapno, tf->err, cpu->id, tf->eip, 
+              rcr2());
+      proc->killed = 1;
+    }
   }
 
   // Force process exit if it has been killed and is in user space.

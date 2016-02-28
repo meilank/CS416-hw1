@@ -102,3 +102,12 @@ sys_halt(void)
     outw(0xB004, 0x2000);
   return 0;
 }
+
+
+int
+sys_getppid(void)
+{
+  if (proc->parent == 0)
+    return 0;
+  return proc->parent->pid;
+}
