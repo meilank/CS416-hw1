@@ -111,3 +111,23 @@ sys_getppid(void)
     return 0;
   return proc->parent->pid;
 }
+
+int register_signal_handler(int signum, sighandler_t handler);
+
+int
+sys_register_signal_handler(void)
+{
+
+  int signum;
+  int handler;
+
+  if(argint(0, &signum) < 0)
+    return -1;
+
+  if(argint(1, &handler) < 0)
+    return -1;
+
+  cprintf("signum: %d, handler: %d\n", signum, handler);
+
+  return register_signal_handler(signum, (sighandler_t) handler);
+}

@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "signal.h"
 
 struct {
   struct spinlock lock;
@@ -70,7 +71,16 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
 
+  //adding code to intialize our signals to be ignored currently?
+  
+  int i = 0;
+  for (; i<NUMSIGNALS; i++){
+    p->handlers[i] = (sighandler_t) 1;
+  }
+  
+
   return p;
+  
 }
 
 //PAGEBREAK: 32
@@ -463,4 +473,25 @@ procdump(void)
     }
     cprintf("\n");
   }
+}
+
+
+//something not working correctly, don't think handler should be zero?
+int
+register_signal_handler(int signum, sighandler_t handler)
+{
+
+  cprintf("in register_signal_handler in proc.c: signum: %d, &handler: %p\n", signum, &handler);
+  if (signum > NUMSIGNALS || signum < 0)  //out of signal bounds, tried to register a handler for an invalid signal
+  {
+    return -1;
+  }
+  else
+  {
+    proc->handlers[signum] = handler;
+    //proc->handlers[signum] = (sighandler_t*) 0x2FB4;
+    //cprintf("in register_signal_handler inside proc.c, handler is now %p, current pid is %d, signum is %d\n", proc->handlers[signum], proc->pid, signum);
+    return 0;
+  }
+
 }

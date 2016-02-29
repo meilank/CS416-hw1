@@ -87,8 +87,22 @@ trap(struct trapframe *tf)
       panic("trap");
     }
     else if (tf->trapno == T_DIVIDE){
-      cprintf("divide by zero found, exiting program\n");
+
+      //dividing by zero -> trigger SIGFPE handler or kill the process if no handler is set
+
+     if (proc->handlers[SIGFPE] == (sighandler_t) 1)
+     {
+      cprintf("No handler assigned for SIGFPE, exiting. Current pid is %d\n", proc->pid);
       proc->killed = 1;
+     }
+     else
+     {
+      cprintf("changing eip == %p\n", proc->handlers[SIGFPE] );
+
+      //need to change to siginfo_t associated with this handler to tell it the signal we caught, how do we do this?
+
+      proc->tf->eip = (uint) proc->handlers[SIGFPE];
+     }
     }
     // In user space, assume process misbehaved.
     else {
