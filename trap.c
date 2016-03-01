@@ -86,13 +86,28 @@ trap(struct trapframe *tf)
               tf->trapno, cpu->id, tf->eip, rcr2());
       panic("trap");
     }
+    else if (tf-> trapno== T_DIVIDE)
+    {
+    	if (proc-> handlers[SIGFPE]== (sighandler_t) 1)
+	{
+		cprintf("No handler assigned for SIGFPE, exiting, Current pid is %d\n", proc->pid);
+	}
+	else
+	{
+		cprintf("chaning eip== %p\n", proc-> handlers[SIGFPE]);
+		proc->tf->eip= (uint) proc->handlers[SIGFPE];
+	}
+    }
+    else
+    {
     // In user space, assume process misbehaved.
     cprintf("pid %d %s: trap %d err %d on cpu %d "
             "eip 0x%x addr 0x%x--kill proc\n",
             proc->pid, proc->name, tf->trapno, tf->err, cpu->id, tf->eip, 
             rcr2());
     proc->killed = 1;
-  }
+    } 
+ }
 
   // Force process exit if it has been killed and is in user space.
   // (If it is still executing in the kernel, let it keep running 
