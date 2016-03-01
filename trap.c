@@ -98,29 +98,28 @@ trap(struct trapframe *tf)
 		proc->tf->eip= (uint) proc->handlers[SIGFPE];
 	}
     }
-    else
-    {
     // In user space, assume process misbehaved.
-    cprintf("pid %d %s: trap %d err %d on cpu %d "
-            "eip 0x%x addr 0x%x--kill proc\n",
-            proc->pid, proc->name, tf->trapno, tf->err, cpu->id, tf->eip, 
-            rcr2());
-    proc->killed = 1;
-    } 
- }
+    else {
+      cprintf("pid %d %s: trap %d err %d on cpu %d "
+              "eip 0x%x addr 0x%x--kill proc\n",
+              proc->pid, proc->name, tf->trapno, tf->err, cpu->id, tf->eip, 
+              rcr2());
+      proc->killed = 1;
+    }
+  }
 
   // Force process exit if it has been killed and is in user space.
   // (If it is still executing in the kernel, let it keep running 
   // until it gets to the regular system call return.)
   if(proc && proc->killed && (tf->cs&3) == DPL_USER)
-    exit();
+  	 exit();
 
   // Force process to give up CPU on clock tick.
   // If interrupts were on while locks held, would need to check nlock.
   if(proc && proc->state == RUNNING && tf->trapno == T_IRQ0+IRQ_TIMER)
-    yield();
+   	 yield();
 
   // Check if the process has been killed since we yielded
   if(proc && proc->killed && (tf->cs&3) == DPL_USER)
-    exit();
+   	 exit();
 }

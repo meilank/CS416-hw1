@@ -102,6 +102,14 @@ int sys_halt(void)
   return 0;
 }
 
+int
+sys_getppid(void)
+{
+  if (proc->parent == 0)
+    return 0;
+  return proc->parent->pid;
+}
+
 int register_signal_handler(int signum, sighandler_t handler);
 
 int
@@ -121,3 +129,4 @@ sys_register_signal_handler(void)
 
   return register_signal_handler(signum, (sighandler_t) handler);
 }
+
