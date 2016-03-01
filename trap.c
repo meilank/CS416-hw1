@@ -55,6 +55,25 @@ trap(struct trapframe *tf)
       release(&tickslock);
     }
     lapiceoi();
+
+    //sigalrm stuff goes here i think? -> timer interupt found, check if alarm is registered and check if requested time has passed, activate handler if it has
+
+    
+    if (proc && proc->alarmset > 0)
+    {
+      //cprintf("proc has alarm set\n");
+
+      proc->alarmticks += 1;
+
+      if (proc->alarmticks > proc->alarmreqticks)   //enough time has passed to run the handler
+      {
+        *(int*) (proc->tf->esp-4) = proc->tf->eip;
+        proc->tf->esp -= 4;
+        proc->tf->eip = (uint) proc->handlers[SIGALRM];
+      }
+    }
+    
+
     break;
   case T_IRQ0 + IRQ_IDE:
     ideintr();
@@ -101,6 +120,13 @@ trap(struct trapframe *tf)
 
       //need to change to siginfo_t associated with this handler to tell it the signal we caught, how do we do this?
 
+
+      //test to see if this works when we know the address of info, it does. how do we get this address without specifying it?
+      //siginfo_t* sig = (siginfo_t*) 0x2FB4;
+      //sig->signum = SIGFPE;
+
+      *(int*) (proc->tf->esp-4) = proc->tf->eip;
+      proc->tf->esp -= 4;
       proc->tf->eip = (uint) proc->handlers[SIGFPE];
      }
     }

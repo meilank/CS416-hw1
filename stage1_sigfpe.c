@@ -5,6 +5,8 @@
 
 void handle_signal(siginfo_t info)
 {
+	printf(1, "&handle_signal: %p, &info: %p\n", &handle_signal, &info);
+
 	printf(1, "Caught signal %d...\n", info.signum);
 	if (info.signum == SIGFPE)
 		printf(1, "TEST PASSED\n");
@@ -15,6 +17,8 @@ void handle_signal(siginfo_t info)
 
 int main(int argc, char *argv[])
 {
+	printf(1, "&handle_signal: %p\n", &handle_signal);
+
 	int x = 5;
 	int y = 0;
 

@@ -131,3 +131,16 @@ sys_register_signal_handler(void)
 
   return register_signal_handler(signum, (sighandler_t) handler);
 }
+
+int alarm(int seconds);
+
+int
+sys_alarm(void)
+{
+  int seconds;
+
+  if(argint(0, &seconds) < 0)
+    return -1;
+
+  return alarm(seconds);
+}

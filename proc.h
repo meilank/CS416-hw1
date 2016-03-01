@@ -69,6 +69,10 @@ struct proc {
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
 
+  uint alarmset;
+  uint alarmreqticks;
+  uint alarmticks;
+
   //siginfo_t signals[NUMSIGNALS];
   sighandler_t handlers[NUMSIGNALS];
 };

@@ -176,7 +176,7 @@ UPROGS=\
 	_shutdown\
 	_ppidtest\
 	_stage1_sigfpe\
-#	_stage1_sigalrm\
+	_stage1_sigalrm\
 #	_stage2\
 #	_stage3\
 

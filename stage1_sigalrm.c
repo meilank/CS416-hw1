@@ -7,6 +7,8 @@ volatile int flag = 0;
 
 void handle_signal(siginfo_t info)
 {
+	//printf(1,"&hs: %p, &info: %p", &handle_signal, &info);
+
 	printf(1, "Caught signal %d...\n", info.signum);
 	if (info.signum == SIGALRM)
 		printf(1, "TEST PASSED\n");
@@ -17,8 +19,8 @@ void handle_signal(siginfo_t info)
 
 int main(int argc, char *argv[])
 {
-	int x = 5;
-	int y = 0;
+	//int x = 5;
+	//int y = 0;
 	int start = uptime();
 
 	signal(SIGALRM, handle_signal);
