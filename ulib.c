@@ -110,7 +110,7 @@ memmove(void *vdst, void *vsrc, int n)
 int
 signal(int signum, sighandler_t handler)
 {
-  printf(1, "in ulib.c signal, signum is %d and handler is %p\n", signum, handler);
+  //printf(1, "in ulib.c signal, signum is %d and handler is %p\n", signum, handler);
   return register_signal_handler(signum, handler);
 }
 

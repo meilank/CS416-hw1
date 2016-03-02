@@ -117,7 +117,6 @@ int register_signal_handler(int signum, sighandler_t handler);
 int
 sys_register_signal_handler(void)
 {
-
   int signum;
   int handler;
 
@@ -127,9 +126,7 @@ sys_register_signal_handler(void)
   if(argint(1, &handler) < 0)
     return -1;
 
-  cprintf("signum: %d, handler: %d\n", signum, handler);
-
-  return register_signal_handler(signum, (sighandler_t) handler);
+  return register_signal_handler(signum, (sighandler_t*) handler);
 }
 
 int alarm(int seconds);

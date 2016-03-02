@@ -56,20 +56,26 @@ trap(struct trapframe *tf)
     }
     lapiceoi();
 
-    //sigalrm stuff goes here i think? -> timer interupt found, check if alarm is registered and check if requested time has passed, activate handler if it has
+    //check if an alarm is set, increase ticks if it is, 
 
-    
     if (proc && proc->alarmset > 0)
     {
-      //cprintf("proc has alarm set\n");
-
       proc->alarmticks += 1;
 
       if (proc->alarmticks > proc->alarmreqticks)   //enough time has passed to run the handler
       {
+        //reset tick things for future alarm calls
+        proc->alarmticks = 0;
+        proc->alarmreqticks = 0;
+        proc->alarmset = 0;
+
         *(int*) (proc->tf->esp-4) = proc->tf->eip;
         proc->tf->esp -= 4;
         proc->tf->eip = (uint) proc->handlers[SIGALRM];
+
+        //current stack pointer + 4 = first argument of the handler (the siginfo struct)
+        siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
+        info->signum = SIGALRM;
       }
     }
     
@@ -109,25 +115,22 @@ trap(struct trapframe *tf)
 
       //dividing by zero -> trigger SIGFPE handler or kill the process if no handler is set
 
-     if (proc->handlers[SIGFPE] == (sighandler_t) 1)
+     if (proc->handlers[SIGFPE] == (sighandler_t*) 1)
      {
       cprintf("No handler assigned for SIGFPE, exiting. Current pid is %d\n", proc->pid);
       proc->killed = 1;
      }
      else
      {
-      cprintf("changing eip == %p\n", proc->handlers[SIGFPE] );
-
-      //need to change to siginfo_t associated with this handler to tell it the signal we caught, how do we do this?
-
-
-      //test to see if this works when we know the address of info, it does. how do we get this address without specifying it?
-      //siginfo_t* sig = (siginfo_t*) 0x2FB4;
-      //sig->signum = SIGFPE;
 
       *(int*) (proc->tf->esp-4) = proc->tf->eip;
       proc->tf->esp -= 4;
       proc->tf->eip = (uint) proc->handlers[SIGFPE];
+
+      //current stack pointer + 4 = first argument of the handler (the siginfo struct)
+
+      siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
+      info->signum = SIGFPE;
      }
     }
     // In user space, assume process misbehaved.

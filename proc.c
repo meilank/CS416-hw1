@@ -79,7 +79,7 @@ found:
 
   int i = 0;
   for (; i<NUMSIGNALS; i++){
-    p->handlers[i] = (sighandler_t) 1;
+    p->handlers[i] = (sighandler_t*) 1;
   }
 
   return p;
@@ -482,7 +482,6 @@ int
 register_signal_handler(int signum, sighandler_t handler)
 {
 
-  cprintf("in register_signal_handler in proc.c: signum: %d, handler: %p\n", signum, handler);
   if (signum > NUMSIGNALS || signum < 0)  //out of signal bounds, tried to register a handler for an invalid signal
   {
     return -1;
@@ -490,8 +489,6 @@ register_signal_handler(int signum, sighandler_t handler)
   else
   {
     proc->handlers[signum] = handler;
-    //proc->handlers[signum] = (sighandler_t*) 0x2FB4;
-    //cprintf("in register_signal_handler inside proc.c, handler is now %p, current pid is %d, signum is %d\n", proc->handlers[signum], proc->pid, signum);
     return 0;
   }
 
