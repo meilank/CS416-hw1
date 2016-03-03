@@ -111,19 +111,6 @@ trap(struct trapframe *tf)
               tf->trapno, cpu->id, tf->eip, rcr2());
       panic("trap");
     }
-<<<<<<< HEAD
-    else if (tf-> trapno== T_DIVIDE)
-    {
-    	if (proc-> handlers[SIGFPE]== (sighandler_t) 1)
-	{
-		cprintf("No handler assigned for SIGFPE, exiting, Current pid is %d\n", proc->pid);
-	}
-	else
-	{
-		cprintf("chaning eip== %p\n", proc-> handlers[SIGFPE]);
-		proc->tf->eip= (uint) proc->handlers[SIGFPE];
-	}
-=======
     else if (tf->trapno == T_DIVIDE){
 
       //dividing by zero -> trigger SIGFPE handler or kill the process if no handler is set
@@ -145,7 +132,6 @@ trap(struct trapframe *tf)
       siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
       info->signum = SIGFPE;
      }
->>>>>>> gary/hw1-stage1
     }
     // In user space, assume process misbehaved.
     else {

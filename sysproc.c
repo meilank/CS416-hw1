@@ -137,11 +137,5 @@ sys_alarm(void)
   if(argint(0, &seconds) < 0)
     return -1;
 
-<<<<<<< HEAD
-  return register_signal_handler(signum, (sighandler_t) handler);
-}
-
-=======
   return alarm(seconds);
 }
->>>>>>> gary/hw1-stage1

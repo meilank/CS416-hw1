@@ -175,12 +175,7 @@ UPROGS=\
 	_zombie\
 	_shutdown\
 	_stage1_sigfpe\
-<<<<<<< HEAD
-#	_ppidtest\
-#	_stage1_sigalrm\
-=======
 	_stage1_sigalrm\
->>>>>>> gary/hw1-stage1
 #	_stage2\
 #	_stage3\
 
