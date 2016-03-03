@@ -73,8 +73,8 @@ struct proc {
   uint alarmreqticks;
   uint alarmticks;
 
-  //siginfo_t signals[NUMSIGNALS];
   sighandler_t *handlers[NUMSIGNALS];
+  popregister_t *popfunc;
 };
 
 // Process memory is laid out contiguously, low addresses first:

@@ -5,8 +5,6 @@
 #include "x86.h"
 #include "signal.h"
 
-//#include "defs.h"
-
 char*
 strcpy(char *s, char *t)
 {
@@ -107,10 +105,22 @@ memmove(void *vdst, void *vsrc, int n)
   return vdst;
 }
 
+void
+popregs(void)
+{
+  __asm__ (
+    "pop %eax\n\t"
+    "pop %ecx\n\t"
+    "pop %edx\n\t"
+    "ret\n\t"
+    );
+}
+
 int
 signal(int signum, sighandler_t handler)
 {
-  //printf(1, "in ulib.c signal, signum is %d and handler is %p\n", signum, handler);
-  return register_signal_handler(signum, handler);
+  return register_signal_handler(signum, handler, popregs);
 }
+
+
 

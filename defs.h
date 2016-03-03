@@ -1,3 +1,5 @@
+#include "signal.h"
+
 struct buf;
 struct context;
 struct file;
@@ -178,6 +180,16 @@ void            switchuvm(struct proc*);
 void            switchkvm(void);
 int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
+
+
+//void popregs(void);
+int register_signal_handler(int signum, sighandler_t handler, popregister_t popfunc);
+int alarm(int seconds);
+
+
+
+
+
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
