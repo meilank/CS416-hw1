@@ -8,8 +8,8 @@
 // as well as a sighandler_t type.
 
 #define NUMSIGNALS 2
-#define SIGFPE 	1
-#define SIGALRM 0
+#define SIGFPE 	0
+#define SIGALRM 1
 
 typedef struct{
 

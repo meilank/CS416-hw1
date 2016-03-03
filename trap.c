@@ -76,36 +76,37 @@ trap(struct trapframe *tf)
         //    function to pop registers is stored at proc->procfunc, stored here in our call to register_signal_handler so the user never sees it
         //    flow should be: 1) push register values 2) run handler, which returns to popfunction? 3) run function which restores the registers, which in turn calls ret which sets the ip next on the stack (the bad instruction)
 
+        
         //setup to run sighandler when we return to user space
         *(int*) (proc->tf->esp-4) = proc->tf->eip;  
         proc->tf->esp -= 4;
         proc->tf->eip = (uint) proc->handlers[SIGALRM];
 
-        cprintf("stage2 setup done, current esp is: %p\n", proc->tf->esp);
+        //cprintf("stage2 setup done, current esp is: %p\n", proc->tf->esp);
 
         //push registers below return address and argument for handler
         *(int*) (proc->tf->esp) = proc->tf->edx;
         *(int*) (proc->tf->esp+4) = proc->tf->ecx;
         *(int*) (proc->tf->esp+8) = proc->tf->eax;
 
-        cprintf("registers pushed\n");
+        //cprintf("registers pushed\n");
 
-        //create frame for our handler function, with its return address being the asm function to pop registers
+        //create frame for our handler function, with its return address being the asm function to pop registers -> think this is wrong, popfunc should be below the things for handler???
         proc->tf->esp += 12;  
         *(int*) (proc->tf->esp) = (uint) proc->popfunc;
         siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
         info->signum = SIGALRM;
 
-        cprintf("frame created, current esp is: %p, eip: %p, popfunc: %p\n", proc->tf->esp, proc->tf->eip, proc->popfunc);
+        //cprintf("frame created, current esp is: %p, eip: %p, popfunc: %p\n", proc->tf->esp, proc->tf->eip, proc->popfunc);
+        
 
-
-        /*    WORKING FOR STAGE1
+        /*
         *(int*) (proc->tf->esp-4) = proc->tf->eip;
         proc->tf->esp -= 4;
         proc->tf->eip = (uint) proc->handlers[SIGALRM];
 
         //current stack pointer + 4 = first argument of the handler (the siginfo struct)
-        siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
+        siginfo_t *info = (siginfo_t*) (proc->tf->esp+4);
         info->signum = SIGALRM;
         */
       }
@@ -154,7 +155,6 @@ trap(struct trapframe *tf)
      }
      else
      {
-
       //things we need to do for stage2:
       //    push proc->tf->eax/ecx/edx onto the stack
       //    build our call to the handler as we did before
@@ -162,18 +162,6 @@ trap(struct trapframe *tf)
       //    function to pop registers is stored at proc->procfunc, stored here in our call to register_signal_handler so the user never sees it
       //    flow should be: 1) push register values 2) run handler, which returns to popfunction? 3) run function which restores the registers, which in turn calls ret which sets the ip next on the stack (the bad instruction)
 
-      *(int*) (proc->tf->esp-4) = proc->tf->eip;
-      proc->tf->esp -= 4;
-      proc->tf->eip = (uint) proc->handlers[SIGFPE];
-
-      //current stack pointer + 4 = first argument of the handler (the siginfo struct)
-      cprintf("proc->tf->ebp: %d, proc->tf->esp: %d\n", proc->tf->ebp, proc->tf->esp);
-
-      siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
-      info->signum = SIGFPE;
-
-
-      //WORKING IMPLEMENTATION FOR STAGE1 
       /*
       *(int*) (proc->tf->esp-4) = proc->tf->eip;
       proc->tf->esp -= 4;
@@ -182,9 +170,24 @@ trap(struct trapframe *tf)
       //current stack pointer + 4 = first argument of the handler (the siginfo struct)
       cprintf("proc->tf->ebp: %d, proc->tf->esp: %d\n", proc->tf->ebp, proc->tf->esp);
 
-      siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
+      siginfo_t *info = (siginfo_t*) (proc->tf->esp+4);
       info->signum = SIGFPE;
       */
+
+      
+      //works for stage1
+      cprintf("ebp: %p, esp: %p\n", proc->tf->ebp, proc->tf->esp);
+      
+      *(int*) (proc->tf->esp-4) = proc->tf->eip;
+      proc->tf->esp -= 4;
+      proc->tf->eip = (uint) proc->handlers[SIGFPE];
+
+      //current stack pointer + 4 = first argument of the handler (the siginfo struct)
+      cprintf("proc->tf->ebp: %d, proc->tf->esp: %d\n", proc->tf->ebp, proc->tf->esp);
+
+      siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
+      info->signum = SIGFPE;
+      
 
      }
     }
