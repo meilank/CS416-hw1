@@ -71,13 +71,16 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
 
-  //adding code to intialize our signals to be ignored currently?
+  //adding code to intialize our signals to be ignored unless a handler is specified, initialized to one because it should never be this by default
   
+  p->alarmset = (uint) 0;
+  p->alarmreqticks = (uint) 0;
+  p->alarmticks = (uint) 0;
+
   int i = 0;
   for (; i<NUMSIGNALS; i++){
-    p->handlers[i] = (sighandler_t) 1;
+    p->handlers[i] = (sighandler_t*) 1;
   }
-  
 
   return p;
   
@@ -475,13 +478,10 @@ procdump(void)
   }
 }
 
-
-//something not working correctly, don't think handler should be zero?
 int
 register_signal_handler(int signum, sighandler_t handler)
 {
 
-  cprintf("in register_signal_handler in proc.c: signum: %d, &handler: %p\n", signum, &handler);
   if (signum > NUMSIGNALS || signum < 0)  //out of signal bounds, tried to register a handler for an invalid signal
   {
     return -1;
@@ -489,9 +489,17 @@ register_signal_handler(int signum, sighandler_t handler)
   else
   {
     proc->handlers[signum] = handler;
-    //proc->handlers[signum] = (sighandler_t*) 0x2FB4;
-    //cprintf("in register_signal_handler inside proc.c, handler is now %p, current pid is %d, signum is %d\n", proc->handlers[signum], proc->pid, signum);
     return 0;
   }
 
+}
+
+int
+alarm(int seconds)
+{
+
+  proc->alarmset = 1;
+  proc->alarmreqticks = seconds*100;
+
+  return 0;
 }

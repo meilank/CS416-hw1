@@ -29,6 +29,7 @@ int halt(void);
 
 int getppid(void);
 int register_signal_handler(int signum, sighandler_t handler);
+int alarm(int seconds);
 
 // ulib.c
 int stat(char*, struct stat*);
@@ -45,3 +46,4 @@ void free(void*);
 int atoi(const char*);
 
 int signal(int signum, sighandler_t handler);
+

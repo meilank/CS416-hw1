@@ -16,6 +16,6 @@ typedef struct{
 	int signum;
 } siginfo_t;
 
-typedef void (*sighandler_t)(siginfo_t);
+typedef void (sighandler_t)(siginfo_t);
 
 #endif
