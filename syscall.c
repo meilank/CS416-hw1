@@ -99,13 +99,11 @@ extern int sys_wait(void);
 extern int sys_write(void);
 extern int sys_uptime(void);
 extern int sys_halt(void);
-<<<<<<< HEAD
-=======
+
 
 extern int sys_getppid(void);
 extern int sys_register_signal_handler(void);
 extern int sys_alarm(void);
->>>>>>> mine2/hw1-stage1
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -130,12 +128,9 @@ static int (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 [SYS_halt]    sys_halt,
-<<<<<<< HEAD
-=======
 [SYS_getppid] sys_getppid,
 [SYS_register_signal_handler] sys_register_signal_handler,
 [SYS_alarm]   sys_alarm
->>>>>>> mine2/hw1-stage1
 };
 
 void
