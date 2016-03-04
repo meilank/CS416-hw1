@@ -30,3 +30,7 @@ SYSCALL(sbrk)
 SYSCALL(sleep)
 SYSCALL(uptime)
 SYSCALL(halt)
+
+SYSCALL(getppid)
+SYSCALL(register_signal_handler)
+SYSCALL(alarm)

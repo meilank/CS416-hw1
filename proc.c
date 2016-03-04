@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "signal.h"
 
 struct {
   struct spinlock lock;
@@ -70,7 +71,19 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
 
+  //adding code to intialize our signals to be ignored unless a handler is specified, initialized to one because it should never be this by default
+  
+  p->alarmset = (uint) 0;
+  p->alarmreqticks = (uint) 0;
+  p->alarmticks = (uint) 0;
+
+  int i = 0;
+  for (; i<NUMSIGNALS; i++){
+    p->handlers[i] = (sighandler_t*) 1;
+  }
+
   return p;
+  
 }
 
 //PAGEBREAK: 32
@@ -339,7 +352,8 @@ forkret(void)
     // of a regular process (e.g., they call sleep), and thus cannot 
     // be run from main().
     first = 0;
-    initlog();
+    iinit(ROOTDEV);
+    initlog(ROOTDEV);
   }
   
   // Return to "caller", actually trapret (see allocproc).
@@ -462,4 +476,30 @@ procdump(void)
     }
     cprintf("\n");
   }
+}
+
+int
+register_signal_handler(int signum, sighandler_t handler)
+{
+
+  if (signum > NUMSIGNALS || signum < 0)  //out of signal bounds, tried to register a handler for an invalid signal
+  {
+    return -1;
+  }
+  else
+  {
+    proc->handlers[signum] = handler;
+    return 0;
+  }
+
+}
+
+int
+alarm(int seconds)
+{
+
+  proc->alarmset = 1;
+  proc->alarmreqticks = seconds*100;
+
+  return 0;
 }

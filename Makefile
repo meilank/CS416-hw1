@@ -29,7 +29,7 @@ OBJS = \
 	vm.o\
 
 # Cross-compiling (e.g., on Mac OS X)
-# TOOLPREFIX = i386-jos-elf
+ TOOLPREFIX = i386-elf-
 
 # Using native tools (e.g., on X86 Linux)
 #TOOLPREFIX = 
@@ -50,8 +50,9 @@ TOOLPREFIX := $(shell if i386-jos-elf-objdump -i 2>&1 | grep '^elf32-i386$$' >/d
 	echo "***" 1>&2; exit 1; fi)
 endif
 
-# If the makefile can't find QEMU, specify its path here
-QEMU = /ilab/users/wkatsak/qemu-1.7.0/i386-softmmu/qemu-system-i386 
+# QEMU = /ilab/users/wkatsak/qemu-1.7.0/i386-softmmu/qemu-system-i386 
+# # If the makefile can't find QEMU, specify its path here
+# QEMU = /ilab/users/wkatsak/qemu-1.7.0/i386-softmmu/qemu-system-i386 
 
 # Try to infer the correct QEMU
 ifndef QEMU
@@ -173,6 +174,10 @@ UPROGS=\
 	_wc\
 	_zombie\
 	_shutdown\
+	_stage1_sigfpe\
+	_stage1_sigalrm\
+	_stage2\
+#	_stage3\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
@@ -273,7 +278,45 @@ tar:
 	rm -rf /tmp/xv6
 	mkdir -p /tmp/xv6
 	cp dist/* dist/.gdbinit.tmpl /tmp/xv6
-	(cd /tmp; tar cf - xv6) | gzip >xv6-rev5.tar.gz
+	(cd /tmp; tar cf - xv6) | gzip >xv6-rev9.tar.gz  # the next one will be 9 (6/27/15)
+
+submit-help:
+	@echo "This makefile target is used to convieniently package your modifications for grading"
+	@echo "Type \"make submit netids=NETID1-NETID2 name=SECTION_NAME base=BASE_BRANCH\" to create a tarball."
+
+submit:
+ifndef netids
+	@echo "You must specify your netids, please type \"make submit-help\" for more details"
+else
+ifndef name
+	@echo "You must specify a name, please type \"make submit-help\" for more details"
+else
+ifndef base
+	@echo "You must specify a base, please type \"make submit-help\" for more details"
+else
+	@./package_patches.sh $(netids) $(name) $(base)
+endif
+endif
+endif
+
+submit-help:
+	@echo "This makefile target is used to convieniently package your modifications for grading"
+	@echo "Type \"make submit netids=NETID1-NETID2 name=SECTION_NAME base=BASE_BRANCH\" to create a tarball."
+
+submit:
+ifndef netids
+	@echo "You must specify your netids, please type \"make submit-help\" for more details"
+else
+ifndef name
+	@echo "You must specify a name, please type \"make submit-help\" for more details"
+else
+ifndef base
+	@echo "You must specify a base, please type \"make submit-help\" for more details"
+else
+	@./package_patches.sh $(netids) $(name) $(base)
+endif
+endif
+endif
 
 submit-help:
 	@echo "This makefile target is used to convieniently package your modifications for grading"

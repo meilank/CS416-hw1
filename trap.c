@@ -55,6 +55,31 @@ trap(struct trapframe *tf)
       release(&tickslock);
     }
     lapiceoi();
+
+    //check if an alarm is set, increase ticks if it is, 
+
+    if (proc && proc->alarmset > 0)
+    {
+      proc->alarmticks += 1;
+
+      if (proc->alarmticks > proc->alarmreqticks)   //enough time has passed to run the handler
+      {
+        //reset tick things for future alarm calls
+        proc->alarmticks = 0;
+        proc->alarmreqticks = 0;
+        proc->alarmset = 0;
+
+        *(int*) (proc->tf->esp-4) = proc->tf->eip;
+        proc->tf->esp -= 4;
+        proc->tf->eip = (uint) proc->handlers[SIGALRM];
+
+        //current stack pointer + 4 = first argument of the handler (the siginfo struct)
+        siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
+        info->signum = SIGALRM;
+      }
+    }
+    
+
     break;
   case T_IRQ0 + IRQ_IDE:
     ideintr();
@@ -86,26 +111,50 @@ trap(struct trapframe *tf)
               tf->trapno, cpu->id, tf->eip, rcr2());
       panic("trap");
     }
+    else if (tf->trapno == T_DIVIDE){
+
+      //dividing by zero -> trigger SIGFPE handler or kill the process if no handler is set
+
+     if (proc->handlers[SIGFPE] == (sighandler_t*) 1)
+     {
+      cprintf("No handler assigned for SIGFPE, exiting. Current pid is %d\n", proc->pid);
+      proc->killed = 1;
+     }
+     else
+     {
+
+      *(int*) (proc->tf->esp-4) = proc->tf->eip;
+      proc->tf->esp -= 4;
+      proc->tf->eip = (uint) proc->handlers[SIGFPE];
+
+      //current stack pointer + 4 = first argument of the handler (the siginfo struct)
+
+      siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
+      info->signum = SIGFPE;
+     }
+    }
     // In user space, assume process misbehaved.
-    cprintf("pid %d %s: trap %d err %d on cpu %d "
-            "eip 0x%x addr 0x%x--kill proc\n",
-            proc->pid, proc->name, tf->trapno, tf->err, cpu->id, tf->eip, 
-            rcr2());
-    proc->killed = 1;
+    else {
+      cprintf("pid %d %s: trap %d err %d on cpu %d "
+              "eip 0x%x addr 0x%x--kill proc\n",
+              proc->pid, proc->name, tf->trapno, tf->err, cpu->id, tf->eip, 
+              rcr2());
+      proc->killed = 1;
+    }
   }
 
   // Force process exit if it has been killed and is in user space.
   // (If it is still executing in the kernel, let it keep running 
   // until it gets to the regular system call return.)
   if(proc && proc->killed && (tf->cs&3) == DPL_USER)
-    exit();
+  	 exit();
 
   // Force process to give up CPU on clock tick.
   // If interrupts were on while locks held, would need to check nlock.
   if(proc && proc->state == RUNNING && tf->trapno == T_IRQ0+IRQ_TIMER)
-    yield();
+   	 yield();
 
   // Check if the process has been killed since we yielded
   if(proc && proc->killed && (tf->cs&3) == DPL_USER)
-    exit();
+   	 exit();
 }

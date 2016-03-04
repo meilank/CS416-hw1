@@ -94,6 +94,7 @@ sys_uptime(void)
 // signal to QEMU.
 // Based on: http://pdos.csail.mit.edu/6.828/2012/homework/xv6-syscall.html
 // and: https://github.com/t3rm1n4l/pintos/blob/master/devices/shutdown.c
+
 int
 sys_halt(void)
 {
@@ -101,4 +102,42 @@ sys_halt(void)
   for( ; *p; p++)
     outw(0xB004, 0x2000);
   return 0;
+}
+
+int
+sys_getppid(void)
+{
+  if (proc->parent == 0)
+    return 0;
+  return proc->parent->pid;
+}
+
+int register_signal_handler(int signum, sighandler_t handler);
+
+int
+sys_register_signal_handler(void)
+{
+  int signum;
+  int handler;
+
+  if(argint(0, &signum) < 0)
+    return -1;
+
+  if(argint(1, &handler) < 0)
+    return -1;
+
+  return register_signal_handler(signum, (sighandler_t*) handler);
+}
+
+int alarm(int seconds);
+
+int
+sys_alarm(void)
+{
+  int seconds;
+
+  if(argint(0, &seconds) < 0)
+    return -1;
+
+  return alarm(seconds);
 }
