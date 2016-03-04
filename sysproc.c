@@ -6,6 +6,7 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+#include "signal.h"
 
 int
 sys_fork(void)
@@ -112,13 +113,14 @@ sys_getppid(void)
   return proc->parent->pid;
 }
 
-int register_signal_handler(int signum, sighandler_t handler);
+//int register_signal_handler(int signum, sighandler_t handler);
 
 int
 sys_register_signal_handler(void)
 {
   int signum;
   int handler;
+  int popfunc;
 
   if(argint(0, &signum) < 0)
     return -1;
@@ -126,10 +128,13 @@ sys_register_signal_handler(void)
   if(argint(1, &handler) < 0)
     return -1;
 
-  return register_signal_handler(signum, (sighandler_t*) handler);
+  if(argint(2, &popfunc) < 0)
+    return -1;
+
+  return register_signal_handler(signum, (sighandler_t*) handler, (popregister_t*) popfunc);
 }
 
-int alarm(int seconds);
+//int alarm(int seconds);
 
 int
 sys_alarm(void)

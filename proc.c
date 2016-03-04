@@ -479,7 +479,7 @@ procdump(void)
 }
 
 int
-register_signal_handler(int signum, sighandler_t handler)
+register_signal_handler(int signum, sighandler_t handler, popregister_t popfunc)
 {
 
   if (signum > NUMSIGNALS || signum < 0)  //out of signal bounds, tried to register a handler for an invalid signal
@@ -488,10 +488,10 @@ register_signal_handler(int signum, sighandler_t handler)
   }
   else
   {
+    proc->popfunc = popfunc;
     proc->handlers[signum] = handler;
     return 0;
   }
-
 }
 
 int

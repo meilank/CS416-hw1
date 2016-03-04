@@ -104,9 +104,30 @@ memmove(void *vdst, void *vsrc, int n)
     *dst++ = *src++;
   return vdst;
 }
+<<<<<<< HEAD
+=======
+
+void
+popregs(void)
+{
+  printf(1, "in popregs\n");
+  __asm__ (
+    "pop %eax\n\t"
+    "pop %ecx\n\t"
+    "pop %edx\n\t"
+    "ret\n\t"
+    );
+}
+
+>>>>>>> gary/hw1-stage2
 int
 signal(int signum, sighandler_t handler)
 {
-  //printf(1, "in ulib.c signal, signum is %d and handler is %p\n", signum, handler);
-  return register_signal_handler(signum, handler);
+  return register_signal_handler(signum, handler, popregs);
 }
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> gary/hw1-stage2
