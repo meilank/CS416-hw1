@@ -93,15 +93,6 @@ trap(struct trapframe *tf)
         *(int*) (proc->tf->esp) = (uint) proc->popfunc;
         siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
         info->signum = SIGALRM;
-        /*
-        *(int*) (proc->tf->esp-4) = proc->tf->eip;
-        proc->tf->esp -= 4;
-        proc->tf->eip = (uint) proc->handlers[SIGALRM];
-
-        //current stack pointer + 4 = first argument of the handler (the siginfo struct)
-        siginfo_t *info = (siginfo_t*) (proc->tf->esp+4);
-        info->signum = SIGALRM;
-        */
       }
     }
     

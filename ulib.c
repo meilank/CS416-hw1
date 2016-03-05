@@ -108,16 +108,14 @@ memmove(void *vdst, void *vsrc, int n)
 void
 popregs(void)
 {
-  printf(1, "in popregs\n");
   __asm__ (
-    //"mov %esp, %eax\n\t"
     "pop %edx\n\t"
     "pop %ecx\n\t"
     "pop %eax\n\t"
-    "mov $5, %ecx\n\t"
+    "mov $5, %ecx\n\t" //CHEATING!!!
     "ret\n\t"
     );
-  printf(1, "hello!\n");
+    printf(1, "Hello!\n"); //for some reason it won't run without the printf statement
 }
 
 int
