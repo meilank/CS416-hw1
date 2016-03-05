@@ -86,7 +86,7 @@ trap(struct trapframe *tf)
         *(int*) (proc->tf->esp+8) = proc->tf->ecx;
         *(int*) (proc->tf->esp+12) = proc->tf->eax;
 
-        //cprintf("registers pushed\n");
+        cprintf("val at ecx %d\n", proc->tf->ecx);
 
         //create frame for our handler function, with its return address being the asm function to pop registers -> think this is wrong, popfunc should be below the things for handler???
         proc->tf->esp += 12;  

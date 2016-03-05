@@ -111,9 +111,10 @@ popregs(void)
   printf(1, "in popregs\n");
   __asm__ (
     //"mov %esp, %eax\n\t"
-    "pop %eax\n\t"
-    "pop %ecx\n\t"
     "pop %edx\n\t"
+    "pop %ecx\n\t"
+    "pop %eax\n\t"
+    "mov $5, %ecx\n\t"
     "ret\n\t"
     );
   printf(1, "hello!\n");
