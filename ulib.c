@@ -108,12 +108,10 @@ memmove(void *vdst, void *vsrc, int n)
 void
 popregs(void)
 {
-  printf(1, "in popregs\n");
   __asm__ (
     "pop %edx\n\t"
-    "pop %ecx\n\t"
     "pop %eax\n\t"
-    //"mov $5, %ecx\n\t"
+    "pop %ecx\n\t"
     "ret\n\t"
   );
   printf(1, "hello!\n");

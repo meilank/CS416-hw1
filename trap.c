@@ -71,19 +71,22 @@ trap(struct trapframe *tf)
         proc->alarmticks = 0;
         proc->alarmreqticks = 0;
         proc->alarmset = 0;
+        //cprintf("stage2 setup done, current esp is: %p\n", proc->tf->esp);
+        *(int*) (proc->tf->esp+4) = proc->tf->edx;
+        *(int*) (proc->tf->esp+8) = proc->tf->eax;
+        *(int*) (proc->tf->esp+12) = proc->tf->ecx;
+
+        proc->tf->esp += 12;  
 
         *(int*) (proc->tf->esp+4) = proc->tf->eip;  
-        proc->tf->esp += 4;
         proc->tf->eip = (uint) proc->handlers[SIGALRM];
-
+        proc->tf->esp += 4;
         //push registers below return address and argument for handler
         *(int*) (proc->tf->esp+4) = proc->tf->edx;
-        *(int*) (proc->tf->esp+8) = proc->tf->ecx;
-        *(int*) (proc->tf->esp+12) = proc->tf->eax;
+        *(int*) (proc->tf->esp+8) = proc->tf->eax;
+        *(int*) (proc->tf->esp+12) = proc->tf->ecx;
 
-        cprintf("val at ecx %d\n", proc->tf->ecx);
-
-        //create frame for our handler function, with its return address being the asm function to pop registers -> think this is wrong, popfunc should be below the things for handler???
+        //create frame for our handler function, with its return address being the asm function to pop registers
         proc->tf->esp += 12;  
         *(int*) (proc->tf->esp) = (uint) proc->popfunc;
         siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
@@ -157,7 +160,7 @@ trap(struct trapframe *tf)
 
       // if (numFPE > 5000)
       // {
-        proc->tf -> esp +=8;
+       // proc->tf -> esp +=8;
       // }
       
      }

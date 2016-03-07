@@ -3,12 +3,13 @@
 #include "user.h"
 #include "signal.h"
 
-int numFPE;
+static int numFPE;
 
 void handle_signal(siginfo_t info)
 {
 	numFPE++;
 	printf(1, "Here!\n");
+	exit();
 }
 
 int main(int argc, char *argv[])
