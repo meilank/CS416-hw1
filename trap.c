@@ -14,6 +14,9 @@ extern uint vectors[];  // in vectors.S: array of 256 entry pointers
 struct spinlock tickslock;
 uint ticks;
 
+//for stage 3
+//static int numFPE= 0;
+
 void
 tvinit(void)
 {
@@ -69,17 +72,9 @@ trap(struct trapframe *tf)
         proc->alarmreqticks = 0;
         proc->alarmset = 0;
 
-        //things we need to do for stage2:
-        //    push proc->tf->eax/ecx/edx onto the stack
-        //    build our call to the handler as we did before
-        //    add our popregs asm function to be called just AFTER the handler to restore the registers -> make this location the return address of the handler?
-        //    function to pop registers is stored at proc->procfunc, stored here in our call to register_signal_handler so the user never sees it
-        //    flow should be: 1) push register values 2) run handler, which returns to popfunction? 3) run function which restores the registers, which in turn calls ret which sets the ip next on the stack (the bad instruction)
         *(int*) (proc->tf->esp+4) = proc->tf->eip;  
         proc->tf->esp += 4;
         proc->tf->eip = (uint) proc->handlers[SIGALRM];
-
-        //cprintf("stage2 setup done, current esp is: %p\n", proc->tf->esp);
 
         //push registers below return address and argument for handler
         *(int*) (proc->tf->esp+4) = proc->tf->edx;
@@ -93,15 +88,6 @@ trap(struct trapframe *tf)
         *(int*) (proc->tf->esp) = (uint) proc->popfunc;
         siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
         info->signum = SIGALRM;
-        /*
-        *(int*) (proc->tf->esp-4) = proc->tf->eip;
-        proc->tf->esp -= 4;
-        proc->tf->eip = (uint) proc->handlers[SIGALRM];
-
-        //current stack pointer + 4 = first argument of the handler (the siginfo struct)
-        siginfo_t *info = (siginfo_t*) (proc->tf->esp+4);
-        info->signum = SIGALRM;
-        */
       }
     }
     
@@ -156,19 +142,24 @@ trap(struct trapframe *tf)
       //    flow should be: 1) push register values 2) run handler, which returns to popfunction? 3) run function which restores the registers, which in turn calls ret which sets the ip next on the stack (the bad instruction)
       
       //works for stage1
-      cprintf("ebp: %p, esp: %p\n", proc->tf->ebp, proc->tf->esp);
+      //cprintf("ebp: %p, esp: %p\n", proc->tf->ebp, proc->tf->esp);
       
       *(int*) (proc->tf->esp-4) = proc->tf->eip;
       proc->tf->esp -= 4;
       proc->tf->eip = (uint) proc->handlers[SIGFPE];
 
       //current stack pointer + 4 = first argument of the handler (the siginfo struct)
-      cprintf("proc->tf->ebp: %d, proc->tf->esp: %d\n", proc->tf->ebp, proc->tf->esp);
+      //cprintf("proc->tf->ebp: %d, proc->tf->esp: %d\n", proc->tf->ebp, proc->tf->esp);
 
       siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
       info->signum = SIGFPE;
-      
+      //numFPE++;
 
+      // if (numFPE > 5000)
+      // {
+        proc->tf -> esp +=8;
+      // }
+      
      }
     }
     // In user space, assume process misbehaved.

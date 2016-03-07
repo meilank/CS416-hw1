@@ -11,10 +11,11 @@
 #define SIGFPE 	0
 #define SIGALRM 1
 
-typedef struct{
-
+typedef struct
+{
 	int signum;
-} siginfo_t;
+} 
+siginfo_t;
 
 typedef void (sighandler_t)(siginfo_t);
 typedef void (popregister_t)(void);
