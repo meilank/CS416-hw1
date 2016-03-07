@@ -110,9 +110,11 @@ popregs(void)
 {
   __asm__ (
     "pop %edx\n\t"
-    "pop %ecx\n\t"
     "pop %eax\n\t"
-    "mov $5, %ecx\n\t" //CHEATING!!!
+    "pop %ecx\n\t"
+    // "mov 20, %esp\n\t"
+    // "mov 20, %ebp\n\t"
+    // "mov $5, %ecx\n\t" //CHEATING!!!
     "ret\n\t"
     );
     printf(1, "Hello!\n"); //for some reason it won't run without the printf statement
