@@ -137,7 +137,9 @@ trap(struct trapframe *tf)
 			*(int*) (proc->tf->esp+8) = proc->tf->eax;
 			*(int*) (proc->tf->esp+12) = proc->tf->ecx;
 
-			proc->tf->esp += 12; // I don't think this is the correct implementation
+			cprintf("ebx: %d, edx: %d, eax: %d\n", proc->tf->ebx, proc->tf->eax, proc->tf->edx);
+
+			// proc->tf->esp += 12; // I don't think this is the correct implementation
 
 			*(int*) (proc->tf->esp+4) = proc->tf->eip;
 			proc->tf->eip = (uint) proc->handlers[SIGFPE];
