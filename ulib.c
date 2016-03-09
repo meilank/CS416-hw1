@@ -120,6 +120,8 @@ popregs(void)
 int
 signal(int signum, sighandler_t handler)
 {
-  return register_signal_handler(signum, handler, popregs);
+  register_signal_handler(signum, handler, popregs);
+  //popregs();
+  return 0;
 }
 
