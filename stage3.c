@@ -3,39 +3,33 @@
 #include "user.h"
 #include "signal.h"
 
-int numFPE;
+static int numFPE;
+int timeTaken;
+int y;
+int x;
+int cont= 1;
 
 void handle_signal(siginfo_t info)
 {
 	numFPE++;
-	//printf(1, "\n");
-	//__asm__ ("movl $0x0,%ebx\n\t");
-	if (numFPE== 1000)
+	if (numFPE==5)
 	{
-		printf(1, "here!\n");
-		__asm__ 
-		(
-			"mov $1, %ebx\n\t"
-			"ret\n\t"
-		);
+		cont= 0;
 	}
-	printf(1, "here\n");
 }
 
 int main(int argc, char *argv[])
 {
 	signal(SIGFPE, handle_signal);
-	register int ebx asm ("%ebx");
 
-	ebx= 0;
-
-	int x= 1;
+	x= 1;
+	y=0;
 	numFPE= 0;
 
-	int timeTaken= uptime();
-	x= x/ebx;
+	timeTaken= uptime();
 
-	printf(1, "%d\n", ebx);
+	while (cont)
+		x= x/y;
 
 	printf(1, "Traps Performed: %d\n", numFPE);
 	printf(1, "Total Elapsed Time: %dms\n", timeTaken);

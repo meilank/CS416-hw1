@@ -133,27 +133,27 @@ trap(struct trapframe *tf)
 		}
 		else
 		{
-			*(int*) (proc->tf->esp+4) = proc->tf->edx;
-			*(int*) (proc->tf->esp+8) = proc->tf->eax;
-			*(int*) (proc->tf->esp+12) = proc->tf->ecx;
-
-			cprintf("ebx: %d, edx: %d, eax: %d\n", proc->tf->ebx, proc->tf->eax, proc->tf->edx);
+			// *(int*) (proc->tf->esp+4) = proc->tf->edx;
+			// *(int*) (proc->tf->esp+8) = proc->tf->eax;
+			// *(int*) (proc->tf->esp+12) = proc->tf->ecx;
 
 			// proc->tf->esp += 12; // I don't think this is the correct implementation
 
-			*(int*) (proc->tf->esp+4) = proc->tf->eip;
+			*(int*) (proc->tf->esp) = proc->tf->eip;
 			proc->tf->eip = (uint) proc->handlers[SIGFPE];
-			proc->tf->esp += 4;
+			//proc->tf->esp += 4;
 
-			*(int*) (proc->tf->esp+4) = proc->tf->edx;
-			*(int*) (proc->tf->esp+8) = proc->tf->eax;
-			*(int*) (proc->tf->esp+12) = proc->tf->ecx;
+			// *(int*) (proc->tf->esp+4) = proc->tf->edx;
+			// *(int*) (proc->tf->esp+8) = proc->tf->eax;
+			// *(int*) (proc->tf->esp+12) = proc->tf->ecx;
 
-			proc->tf->esp += 12;
+			// proc->tf->esp += 12;
 
-			*(int*) (proc->tf->esp) = (uint) proc->popfunc;
+			// *(int*) (proc->tf->esp) = (uint) proc->popfunc;
 			siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
 			info->signum = SIGFPE;
+
+			//printf("ebx: %d, edx: %d, eax: %d\n", proc->tf->ebx, proc->tf->eax, proc->tf->edx);
 		}
 	}
 	// In user space, assume process misbehaved.
