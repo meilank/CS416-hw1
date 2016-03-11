@@ -110,9 +110,11 @@ popregs(void)
 {
   printf(1, "in popregs\n");
   __asm__ (
+    "sub %esp, 4\n\t"
     "pop %eax\n\t"
     "pop %ecx\n\t"
     "pop %edx\n\t"
+    //"movl %esp, %ebp\n\t"
     "ret\n\t"
     );
 }
