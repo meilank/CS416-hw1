@@ -121,7 +121,6 @@ int
 signal(int signum, sighandler_t handler)
 {
   register_signal_handler(signum, handler, popregs);
-  //popregs();
   return 0;
 }
 
