@@ -29,7 +29,7 @@ OBJS = \
 	vm.o\
 
 # Cross-compiling (e.g., on Mac OS X)
-# TOOLPREFIX = i386-jos-elf
+ TOOLPREFIX = i386-elf-
 
 # Using native tools (e.g., on X86 Linux)
 #TOOLPREFIX = 
@@ -176,12 +176,10 @@ UPROGS=\
 	_wc\
 	_zombie\
 	_shutdown\
-	_ppidtest\
 	_stage1_sigfpe\
 	_stage1_sigalrm\
 	_stage2\
 #	_stage3\
-
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)

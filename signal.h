@@ -19,8 +19,4 @@ typedef struct{
 typedef void (sighandler_t)(siginfo_t);
 typedef void (popregister_t)(void);
 
-
-
-
-
 #endif

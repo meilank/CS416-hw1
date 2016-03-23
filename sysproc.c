@@ -95,6 +95,7 @@ sys_uptime(void)
 // signal to QEMU.
 // Based on: http://pdos.csail.mit.edu/6.828/2012/homework/xv6-syscall.html
 // and: https://github.com/t3rm1n4l/pintos/blob/master/devices/shutdown.c
+
 int
 sys_halt(void)
 {
@@ -145,4 +146,3 @@ sys_alarm(void)
 
   return alarm(seconds);
 }
-

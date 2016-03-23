@@ -108,15 +108,16 @@ memmove(void *vdst, void *vsrc, int n)
 void
 popregs(void)
 {
-  printf(1, "in popregs\n");
   __asm__ (
-    "sub %esp, 4\n\t"
+    "pop %edx\n\t"
     "pop %eax\n\t"
     "pop %ecx\n\t"
-    "pop %edx\n\t"
-    //"movl %esp, %ebp\n\t"
+    // "mov 20, %esp\n\t"
+    // "mov 20, %ebp\n\t"
+    // "mov $5, %ecx\n\t" //CHEATING!!!
     "ret\n\t"
     );
+    //printf(1, "Hello!\n"); //for some reason it won't run without the printf statement
 }
 
 int
@@ -124,6 +125,4 @@ signal(int signum, sighandler_t handler)
 {
   return register_signal_handler(signum, handler, popregs);
 }
-
-
 

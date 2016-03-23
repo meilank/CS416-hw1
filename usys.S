@@ -34,4 +34,3 @@ SYSCALL(halt)
 SYSCALL(getppid)
 SYSCALL(register_signal_handler)
 SYSCALL(alarm)
-
