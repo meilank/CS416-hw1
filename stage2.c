@@ -20,7 +20,7 @@ int main(void)
 
     alarm(1);
 
-    printf(1, "alarm set\n");
+    //printf(1, "alarm set\n");
 
     while(!flag);
 

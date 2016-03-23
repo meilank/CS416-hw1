@@ -29,7 +29,7 @@ OBJS = \
 	vm.o\
 
 # Cross-compiling (e.g., on Mac OS X)
- TOOLPREFIX = i386-elf-
+ #TOOLPREFIX = i386-elf-
 
 # Using native tools (e.g., on X86 Linux)
 #TOOLPREFIX = 
@@ -50,9 +50,11 @@ TOOLPREFIX := $(shell if i386-jos-elf-objdump -i 2>&1 | grep '^elf32-i386$$' >/d
 	echo "***" 1>&2; exit 1; fi)
 endif
 
-# QEMU = /ilab/users/wkatsak/qemu-1.7.0/i386-softmmu/qemu-system-i386 
-# # If the makefile can't find QEMU, specify its path here
-# QEMU = /ilab/users/wkatsak/qemu-1.7.0/i386-softmmu/qemu-system-i386 
+# ilab/users/wkatsak/qemu-1.7.0/i386-softmmu/qemu-system-i386 
+# If the makefile can't find QEMU, specify its path here
+
+QEMU = qemu-system-i386
+#QEMU = /ilab/users/wkatsak/qemu-1.7.0/i386-softmmu/qemu-system-i386 
 
 # Try to infer the correct QEMU
 ifndef QEMU
