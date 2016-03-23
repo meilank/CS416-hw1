@@ -117,7 +117,7 @@ popregs(void)
     // "mov $5, %ecx\n\t" //CHEATING!!!
     "ret\n\t"
     );
-    //printf(1, "Hello!\n"); //for some reason it won't run without the printf statement
+    printf(1, ""); //for some reason it won't run without the printf statement
 }
 
 int
