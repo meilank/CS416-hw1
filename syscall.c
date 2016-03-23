@@ -99,6 +99,8 @@ extern int sys_wait(void);
 extern int sys_write(void);
 extern int sys_uptime(void);
 extern int sys_halt(void);
+
+
 extern int sys_getppid(void);
 extern int sys_register_signal_handler(void);
 extern int sys_alarm(void);

@@ -104,7 +104,6 @@ sys_halt(void)
   return 0;
 }
 
-
 int
 sys_getppid(void)
 {
@@ -146,3 +145,4 @@ sys_alarm(void)
 
   return alarm(seconds);
 }
+
