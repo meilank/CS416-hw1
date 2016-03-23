@@ -129,13 +129,20 @@ trap(struct trapframe *tf)
      }
      else
      {
-      *(int*) (proc->tf->esp-4) = proc->tf->eip;
-      proc->tf->esp -= 4;
+      *(int*) (proc->tf->esp+4) = proc->tf->edx;
+      *(int*) (proc->tf->esp+8) = proc->tf->eax;
+      *(int*) (proc->tf->esp+12) = proc->tf->ecx;
+      *(int*) (proc->tf->esp+16) = proc->tf->eip;   
+
       proc->tf->eip = (uint) proc->handlers[SIGFPE];
 
-      //current stack pointer + 4 = first argument of the handler (the siginfo struct)
-     // cprintf("proc->tf->ebp: %d, proc->tf->esp: %d\n", proc->tf->ebp, proc->tf->esp);
+      *(int*) (proc->tf->esp+20) = proc->tf->edx;
+      *(int*) (proc->tf->esp+24) = proc->tf->eax;
+      *(int*) (proc->tf->esp+28) = proc->tf->ecx;
 
+      proc->tf->esp += 28;  
+     // cprintf("proc->tf->ebp: %d, proc->tf->esp: %d\n", proc->tf->ebp, proc->tf->esp);
+      *(int*) (proc->tf->esp) = (uint) proc->popfunc;
       siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
       info->signum = SIGFPE;
      }
