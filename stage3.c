@@ -7,15 +7,14 @@ static int numFPE;
 int timeTaken;
 int y;
 int x;
-//int cont= 1;
+int cont;
 
 void handle_signal(siginfo_t info)
 {
 	numFPE++;
 	if (numFPE==5)
 	{
-		y= 1;
-		//cont= 0;
+		cont= 0;
 	}
 }
 
@@ -26,10 +25,11 @@ int main(int argc, char *argv[])
 	x= 1;
 	y= 0;
 	numFPE= 0;
+	cont= 1;
 
 	timeTaken= uptime();
 
-	//while (cont)
+	while (cont)
 		x= x/y;
 
 	printf(1, "Traps Performed: %d\n", numFPE);
