@@ -64,32 +64,24 @@ trap(struct trapframe *tf)
 
       if (proc->alarmticks > proc->alarmreqticks)   //enough time has passed to run the handler
       {
-        //reset tick things for future alarm calls
         proc->alarmticks = 0;
         proc->alarmreqticks = 0;
         proc->alarmset = 0;
-        //cprintf("stage2 setup done, current esp is: %p\n", proc->tf->esp);
+
         *(int*) (proc->tf->esp+4) = proc->tf->edx;
         *(int*) (proc->tf->esp+8) = proc->tf->eax;
         *(int*) (proc->tf->esp+12) = proc->tf->ecx;
 
-        cprintf("val at eax %d\tecx %d\tedx %d\n", proc->tf->eax, proc->tf->ecx, proc->tf->edx);
-        //create frame for our handler function, with its return address being the asm function to pop registers
-        proc->tf->esp += 12;  
-
-        *(int*) (proc->tf->esp+4) = proc->tf->eip;  
+        *(int*) (proc->tf->esp+16) = proc->tf->eip;  
         proc->tf->eip = (uint) proc->handlers[SIGALRM];
-        proc->tf->esp += 4;
-        //push registers below return address and argument for handler
-        *(int*) (proc->tf->esp+4) = proc->tf->edx;
-        *(int*) (proc->tf->esp+8) = proc->tf->eax;
-        *(int*) (proc->tf->esp+12) = proc->tf->ecx;
 
-        cprintf("val at eax %d\tecx %d\tedx %d\n", proc->tf->eax, proc->tf->ecx, proc->tf->edx);
-        //create frame for our handler function, with its return address being the asm function to pop registers
-        proc->tf->esp += 12;  
+        *(int*) (proc->tf->esp+20) = proc->tf->edx;
+        *(int*) (proc->tf->esp+24) = proc->tf->eax;
+        *(int*) (proc->tf->esp+28) = proc->tf->ecx;
+
+        proc->tf->esp += 28;  
         *(int*) (proc->tf->esp) = (uint) proc->popfunc;
-        siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
+        siginfo_t *info = (siginfo_t*) (proc->tf->esp +4);
         info->signum = SIGALRM;
       }
     }
@@ -137,27 +129,15 @@ trap(struct trapframe *tf)
      }
      else
      {
-      //things we need to do for stage2:
-      //    push proc->tf->eax/ecx/edx onto the stack
-      //    build our call to the handler as we did before
-      //    add our popregs asm function to be called just AFTER the handler to restore the registers -> make this location the return address of the handler?
-      //    function to pop registers is stored at proc->procfunc, stored here in our call to register_signal_handler so the user never sees it
-      //    flow should be: 1) push register values 2) run handler, which returns to popfunction? 3) run function which restores the registers, which in turn calls ret which sets the ip next on the stack (the bad instruction)
-      
-      //works for stage1
-      cprintf("ebp: %p, esp: %p\n", proc->tf->ebp, proc->tf->esp);
-      
       *(int*) (proc->tf->esp-4) = proc->tf->eip;
       proc->tf->esp -= 4;
       proc->tf->eip = (uint) proc->handlers[SIGFPE];
 
       //current stack pointer + 4 = first argument of the handler (the siginfo struct)
-      cprintf("proc->tf->ebp: %d, proc->tf->esp: %d\n", proc->tf->ebp, proc->tf->esp);
+     // cprintf("proc->tf->ebp: %d, proc->tf->esp: %d\n", proc->tf->ebp, proc->tf->esp);
 
       siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
       info->signum = SIGFPE;
-      
-
      }
     }
     // In user space, assume process misbehaved.

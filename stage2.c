@@ -8,12 +8,11 @@ void handle_signal(siginfo_t info)
 {
     __asm__ ("movl $0x0,%ecx\n\t");
     flag = 1;
-    printf(1, "in stage2 handler\n");
 } 
 
 int main(void)
 {
-   register int ecx asm ("%ecx");
+    register int ecx asm ("%ecx");
     
     signal(SIGALRM, handle_signal);
 
