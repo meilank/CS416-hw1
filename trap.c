@@ -137,8 +137,7 @@ trap(struct trapframe *tf)
 			proc->tf->eip = (uint) proc->handlers[SIGFPE];
 			siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
 			info->signum = SIGFPE;
-
-			cprintf("ebx: %d, edx: %d, eax: %d, ecx: %d, edi: %d, esi: %d\n", proc->tf->ebx, proc->tf->eax, proc->tf->edx, proc->tf->ecx, proc->tf->edi, proc->tf->esi);
+			//cprintf("ebx: %d, edx: %d, eax: %d, ecx: %d, edi: %d, esi: %d\n", proc->tf->ebx, proc->tf->eax, proc->tf->edx, proc->tf->ecx, proc->tf->edi, proc->tf->esi);
 		}
 	}
 	// In user space, assume process misbehaved.
