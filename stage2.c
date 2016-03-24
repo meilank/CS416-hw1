@@ -13,7 +13,7 @@ void handle_signal(siginfo_t info)
 
 int main(void)
 {
-   register int ecx asm ("%ecx");
+    register int ecx asm ("%ecx");
     
     signal(SIGALRM, handle_signal);
 
