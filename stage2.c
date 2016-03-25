@@ -20,9 +20,7 @@ int main(void)
     ecx = 5;
 
     alarm(1);
-
-    //printf(1, "alarm set\n");
-
+    
     while(!flag);
 
     if (ecx == 5)
