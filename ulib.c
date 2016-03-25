@@ -114,7 +114,7 @@ popregs(void)
     "pop %ecx\n\t"
     "ret\n\t"
   );
-  printf(1, "hello!\n");
+  printf(1, "");
 }
 
 int

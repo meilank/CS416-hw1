@@ -11,7 +11,7 @@ int x;
 void handle_signal(siginfo_t info)
 {
 	numFPE++;
-	if (numFPE== 8)
+	if (numFPE== 10)
 	{
 		printf(1, "here!\n");
 		y= 1;

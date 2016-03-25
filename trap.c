@@ -132,18 +132,21 @@ trap(struct trapframe *tf)
 	      *(int*) (proc->tf->esp+4) = proc->tf->edx;
 	      *(int*) (proc->tf->esp+8) = proc->tf->eax;
 	      *(int*) (proc->tf->esp+12) = proc->tf->ecx;
-	      *(int*) (proc->tf->esp+16) = proc->tf->eip;   
 
+	      *(int*) (proc->tf->esp+16) = proc->tf->eip;   
 	      proc->tf->eip = (uint) proc->handlers[SIGFPE];
 
 	      *(int*) (proc->tf->esp+20) = proc->tf->edx;
 	      *(int*) (proc->tf->esp+24) = proc->tf->eax;
 	      *(int*) (proc->tf->esp+28) = proc->tf->ecx;
-	      // cprintf("proc->tf->ebp: %d, proc->tf->esp: %d\n", proc->tf->ebp, proc->tf->esp);
+
+	      //cprintf("proc->tf->ebp: %d, proc->tf->esp: %d\n", proc->tf->ebp, proc->tf->esp);
+	      cprintf("ebx: %d, edx: %d, eax: %d, ecx: %d, edi: %d, esi: %d\n", proc->tf->ebx, proc->tf->eax, proc->tf->edx, proc->tf->ecx, proc->tf->edi, proc->tf->esi);
 	      proc->tf->esp += 28;  
 	      *(int*) (proc->tf->esp) = (uint) proc->popfunc;
 	      siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
 	      info->signum = SIGFPE;
+	      cprintf("ebx: %d, edx: %d, eax: %d, ecx: %d, edi: %d, esi: %d\n", proc->tf->ebx, proc->tf->eax, proc->tf->edx, proc->tf->ecx, proc->tf->edi, proc->tf->esi);
   		}
 	}
 	// In user space, assume process misbehaved.
