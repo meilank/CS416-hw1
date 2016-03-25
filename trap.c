@@ -134,12 +134,12 @@ trap(struct trapframe *tf)
         *((uint*)(proc->tf->esp-16)) = proc->tf->edx;
         
         siginfo_t *info = (siginfo_t*) (proc->tf->esp - 20);
-        info->signum = SIGALRM;
+        info->signum = SIGFPE;
 
         *((uint*)(proc->tf->esp-24)) = (uint)proc->popfunc;
         proc->tf->esp -= 24;
 
-        proc->tf->eip = (uint)(proc->handlers[SIGALRM]);
+        proc->tf->eip = (uint)(proc->handlers[SIGFPE]);
      }
     }
     // In user space, assume process misbehaved.
