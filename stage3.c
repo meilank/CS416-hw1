@@ -12,7 +12,7 @@ int cont;
 void handle_signal(siginfo_t info)
 {
 	numFPE++;
-	if (numFPE==5)
+	if (numFPE==1000)
 	{
 		cont= 0;
 	}
