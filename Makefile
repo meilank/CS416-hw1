@@ -179,7 +179,10 @@ UPROGS=\
 	_stage1_sigfpe\
 	_stage1_sigalrm\
 	_stage2\
+<<<<<<< HEAD
 	_stage2_sigfpe\
+=======
+>>>>>>> gary/hw1-stage3
 	_stage3\
 
 fs.img: mkfs README $(UPROGS)
