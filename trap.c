@@ -67,28 +67,24 @@ trap(struct trapframe *tf)
 		{
 			//reset tick things for future alarm calls
 			proc->alarmticks = 0;
-			proc->alarmreqticks = 0;
-			proc->alarmset = 0;
-			//cprintf("stage2 setup done, current esp is: %p\n", proc->tf->esp);
-			*(int*) (proc->tf->esp+4) = proc->tf->edx;
-			*(int*) (proc->tf->esp+8) = proc->tf->eax;
-			*(int*) (proc->tf->esp+12) = proc->tf->ecx;
+	        proc->alarmreqticks = 0;
+	        proc->alarmset = 0;
 
-			proc->tf->esp += 12; // I don't think this is the correct implementation
+	        *(int*) (proc->tf->esp+4) = proc->tf->edx;
+	        *(int*) (proc->tf->esp+8) = proc->tf->eax;
+	        *(int*) (proc->tf->esp+12) = proc->tf->ecx;
 
-			*(int*) (proc->tf->esp+4) = proc->tf->eip;  
-			proc->tf->eip = (uint) proc->handlers[SIGALRM];
-			proc->tf->esp += 4;
-			//push registers below return address and argument for handler
-			*(int*) (proc->tf->esp+4) = proc->tf->edx;
-			*(int*) (proc->tf->esp+8) = proc->tf->eax;
-			*(int*) (proc->tf->esp+12) = proc->tf->ecx;
+	        *(int*) (proc->tf->esp+16) = proc->tf->eip;  
+	        proc->tf->eip = (uint) proc->handlers[SIGALRM];
 
-			//create frame for our handler function, with its return address being the asm function to pop registers
-			proc->tf->esp += 12;  
-			*(int*) (proc->tf->esp) = (uint) proc->popfunc;
-			siginfo_t *info = (siginfo_t*) (proc->tf->esp +4);
-			info->signum = SIGALRM;
+	        *(int*) (proc->tf->esp+20) = proc->tf->edx;
+	        *(int*) (proc->tf->esp+24) = proc->tf->eax;
+	        *(int*) (proc->tf->esp+28) = proc->tf->ecx;
+
+	        proc->tf->esp += 28;  
+	        *(int*) (proc->tf->esp) = (uint) proc->popfunc;
+	        siginfo_t *info = (siginfo_t*) (proc->tf->esp +4);
+	        info->signum = SIGALRM;
 		}
 	}
 	break;
@@ -133,12 +129,22 @@ trap(struct trapframe *tf)
 		}
 		else
 		{
-			*(int*) (proc->tf->esp) = proc->tf->eip;
-			proc->tf->eip = (uint) proc->handlers[SIGFPE];
-			siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
-			info->signum = SIGFPE;
-			//cprintf("ebx: %d, edx: %d, eax: %d, ecx: %d, edi: %d, esi: %d\n", proc->tf->ebx, proc->tf->eax, proc->tf->edx, proc->tf->ecx, proc->tf->edi, proc->tf->esi);
-		}
+	      *(int*) (proc->tf->esp+4) = proc->tf->edx;
+	      *(int*) (proc->tf->esp+8) = proc->tf->eax;
+	      *(int*) (proc->tf->esp+12) = proc->tf->ecx;
+	      *(int*) (proc->tf->esp+16) = proc->tf->eip;   
+
+	      proc->tf->eip = (uint) proc->handlers[SIGFPE];
+
+	      *(int*) (proc->tf->esp+20) = proc->tf->edx;
+	      *(int*) (proc->tf->esp+24) = proc->tf->eax;
+	      *(int*) (proc->tf->esp+28) = proc->tf->ecx;
+	      // cprintf("proc->tf->ebp: %d, proc->tf->esp: %d\n", proc->tf->ebp, proc->tf->esp);
+	      proc->tf->esp += 28;  
+	      *(int*) (proc->tf->esp) = (uint) proc->popfunc;
+	      siginfo_t *info = (siginfo_t*) (proc->tf->esp + 4);
+	      info->signum = SIGFPE;
+  		}
 	}
 	// In user space, assume process misbehaved.
 	else 
