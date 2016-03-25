@@ -11,7 +11,7 @@ int x;
 void handle_signal(siginfo_t info)
 {
 	numFPE++;
-	if (numFPE== 10)
+	if (numFPE== 1000)
 	{
 		printf(1, "here!\n");
 		y= 1;
@@ -20,6 +20,7 @@ void handle_signal(siginfo_t info)
 
 int main(int argc, char *argv[])
 {
+
 	signal(SIGFPE, handle_signal);
 
 	x= 5;
@@ -28,8 +29,7 @@ int main(int argc, char *argv[])
 
 	timeTaken= uptime();
 
-	while (y == 0)
-		x= x/y;
+	x= x/y;
 
 	printf(1, "Traps Performed: %d\n", numFPE);
 	printf(1, "Total Elapsed Time: %dms\n", timeTaken);

@@ -108,14 +108,17 @@ memmove(void *vdst, void *vsrc, int n)
 void
 popregs(void)
 {
-  __asm__ (
+  __asm__(
+    "trampoline:\n\t"
+    "addl $8,%esp\n\t"
     "pop %edx\n\t"
-    "pop %eax\n\t"
     "pop %ecx\n\t"
+    "pop %eax\n\t"
     "ret\n\t"
-  );
-  printf(1, "");
+    );
+    //printf(1, ""); //for some reason it won't run without the printf statement
 }
+
 
 int
 signal(int signum, sighandler_t handler)
@@ -123,4 +126,5 @@ signal(int signum, sighandler_t handler)
   register_signal_handler(signum, handler, popregs);
   return 0;
 }
+
 
