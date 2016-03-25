@@ -109,10 +109,12 @@ void
 popregs(void)
 {
   __asm__ (
-    "pop %edx\n\t"
-    "pop %eax\n\t"
-    "pop %ecx\n\t"
-    "ret\n\t"
+    //"addl $12,%esp;"
+    //"addl $12,%esp;"
+    "pop %edx;"
+    "pop %ecx;"
+    "pop %eax;"
+    "ret"
     );
     printf(1, ""); //for some reason it won't run without the printf statement
 }
